@@ -18,7 +18,7 @@ class TodoApp {
     
     addEventListener(){
         document.body.addEventListener('click', (event)=>{
-            this.selectTodo(event)
+            // this.selectTodo(event)
             this.strikeThroughTodo(event)
         })
         document.body.addEventListener('dblclick',(event) =>{
@@ -54,15 +54,6 @@ class TodoApp {
         this.render()
     }
 
-    selectTodo(event){
-        const $selectedTodo = event.target.closest('.todo')
-        if(!$selectedTodo)return
-        const [$todoTitle,$todoText] = $selectedTodo.children
-        this.title = $todoTitle.innerText
-        this.text = $todoText.innerText
-        this.id = $selectedTodo.dataset.id
-        console.log(`you clicked todo: ${this.title}`)
-    }
 
     strikeThroughTodo(e){
         const $selectedTodo = e.target.closest('.todo')
