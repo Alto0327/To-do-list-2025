@@ -1,37 +1,78 @@
-const inputEl = document.getElementById('input-el')
-const inputBtn = document.getElementById('input-btn')
-const deleteBtn = document.getElementById('delete-btn')
-const UlEl = document.getElementById('ul-el')
+class TodoApp {
+    constructor(){
+        this.todos = JSON.parse(localStorage.getItem('todos')) || []
+        this.title = ''
+        this.text = ''
+        this.id =""
 
-let todo = []
+        this.$form = document.querySelector('#form')
+        this.$todos = document.querySelector("#todos")
+        this.$todoTitle = document.querySelector('#todo-title')
+        this.$todoText = document.querySelector('#todo-text')
+        this.$placeholder = document.querySelector('#placeholder')
 
-inputEl.addEventListener('keypress', (press) => press.key === 'Enter' && inputBtn.click())
-
-inputBtn.addEventListener('click', () => {
-    inputEl.value.trim() !== '' 
-    ? (
-        todo.push(inputEl.value),
-        inputEl.value="",
-        addToDo(todo)
-    ) : null
-})
-
-function addToDo(todos){
-    console.log('function activated')
-    let todoTasks =""
-    for(let i = 0; i < todo.length; i++){
-        todoTasks += `
-            <li class="todo-item">
-                ${todos[i]}
-            </li>
-        `
+        this.addEventListener()
+        this.render()
     }
-    UlEl.innerHTML = todoTasks
 
-    const listItems = document.querySelectorAll(".todo-item");
-    listItems.forEach((li) => {
-        li.addEventListener("click", function () {
-            this.remove(); 
-        });
-    });
+    
+    addEventListener(){
+        
+        this.$form.addEventListener('submit', event => {
+            event.preventDefault()            
+            const title = this.$todoTitle.value.trim()
+            const text = this.$todoText.value.trim()
+            
+            if (title || text) {
+                console.log('has value')
+                this.addTodo({ title, text })
+            } else {
+                console.log('No value entered')
+            }
+        })
+        
+        
+    }
+
+    addTodo({title,text}){
+        const newTodo ={
+            title,
+            text,
+            id: this.todos.length > 0 ? this.todos[this.todos.length -1].id + 1 : 1
+        }
+        this.todos = [...this.todos, newTodo]
+        this.$todoTitle.value =""
+        this.$todoText.value =""
+
+        this.render()
+    }
+    
+    displayTodos(){
+        const hasTodos = this.todos.length > 0
+        this.$placeholder.style.display = hasTodos ? "none" : "flex"
+        this.$todos.innerHTML = this.todos.map((todo) => `
+            <div class=${todo.id && 'todo'}>
+                <h1 id='todo-title'>${todo.title}</h1>
+                <p id='todo-text'>${todo.text} ${todo.id}</p>
+                
+            </div>
+        
+        `)
+        .join("")
+    }
+
+
+    saveTodos(){
+        localStorage.setItem('todos', JSON.stringify(this.todos))
+    }
+
+    
+    render(){
+        this.saveTodos()
+        this.displayTodos()
+    }
+    
+    
 }
+
+new TodoApp()
