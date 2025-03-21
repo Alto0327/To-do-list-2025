@@ -4,7 +4,6 @@ class TodoApp {
         this.title = ''
         this.text = ''
         this.id =""
-
         this.$form = document.querySelector('#form')
         this.$todos = document.querySelector("#todos")
         this.$todoTitle = document.querySelector('#todo-title')
@@ -60,7 +59,7 @@ class TodoApp {
         if(!$selectedTodo)return
         const id = Number($selectedTodo.dataset.id)
        this.todos.forEach(todo => {
-        if(todo.id === id) $selectedTodo.style.textDecoration = "line-through";
+        if(todo.id === id) $selectedTodo.classList.toggle('line-through')
        })
         
     }
