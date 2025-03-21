@@ -17,7 +17,14 @@ class TodoApp {
 
     
     addEventListener(){
-        
+        document.body.addEventListener('click', (event)=>{
+            this.selectTodo(event)
+            this.strikeThroughTodo(event)
+        })
+        document.body.addEventListener('dblclick',(event) =>{
+            this.deleteTodo(event)
+        })
+
         this.$form.addEventListener('submit', event => {
             event.preventDefault()            
             const title = this.$todoTitle.value.trim()
@@ -31,7 +38,7 @@ class TodoApp {
             }
         })
         
-        
+
     }
 
     addTodo({title,text}){
@@ -46,14 +53,42 @@ class TodoApp {
 
         this.render()
     }
+
+    selectTodo(event){
+        const $selectedTodo = event.target.closest('.todo')
+        if(!$selectedTodo)return
+        const [$todoTitle,$todoText] = $selectedTodo.children
+        this.title = $todoTitle.innerText
+        this.text = $todoText.innerText
+        this.id = $selectedTodo.dataset.id
+        console.log(`you clicked todo: ${this.title}`)
+    }
+
+    strikeThroughTodo(e){
+        const $selectedTodo = e.target.closest('.todo')
+        if(!$selectedTodo)return
+        const id = Number($selectedTodo.dataset.id)
+       this.todos.forEach(todo => {
+        if(todo.id === id) $selectedTodo.style.textDecoration = "line-through";
+       })
+        
+    }
+
+    deleteTodo(e){
+        const $selectedTodo = e.target.closest('.todo')
+        if(!$selectedTodo)return
+        const id = Number($selectedTodo.dataset.id)
+        this.todos = this.todos.filter(todo => todo.id !== id)
+        this.render()
+    }
     
     displayTodos(){
         const hasTodos = this.todos.length > 0
         this.$placeholder.style.display = hasTodos ? "none" : "flex"
         this.$todos.innerHTML = this.todos.map((todo) => `
-            <div class=${todo.id && 'todo'}>
-                <h1 id='todo-title'>${todo.title}</h1>
-                <p id='todo-text'>${todo.text} ${todo.id}</p>
+            <div class='todo' data-id=${todo.id}>
+                <h1 id=${todo.title &&'todo-title'}>${todo.title}</h1>
+                <p id=${todo.text &&'todo-text'}>${todo.text}</p>
                 
             </div>
         
@@ -61,12 +96,10 @@ class TodoApp {
         .join("")
     }
 
-
     saveTodos(){
         localStorage.setItem('todos', JSON.stringify(this.todos))
     }
 
-    
     render(){
         this.saveTodos()
         this.displayTodos()
